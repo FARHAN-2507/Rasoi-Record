@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Cell } from "recharts";
 import {
   Card,
   CardContent,
@@ -107,7 +107,7 @@ export default function WastageCharts({ data }: WastageChartsProps) {
                     <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                     <Bar dataKey="value" layout="vertical" radius={4}>
                          {reasonData.map((entry, index) => (
-                            <div key={`cell-${index}`} fill={reasonChartConfig[entry.name as keyof typeof reasonChartConfig]?.color} />
+                            <Cell key={`cell-${index}`} fill={reasonChartConfig[entry.name as keyof typeof reasonChartConfig]?.color} />
                         ))}
                     </Bar>
                 </BarChart>
