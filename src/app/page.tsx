@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Header from "@/components/header";
 import WastageForm from "@/components/wastage-form";
@@ -9,6 +9,7 @@ import WastageCharts from "@/components/wastage-charts";
 import WeeklySummary from "@/components/weekly-summary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { WastageEntry } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const initialData: WastageEntry[] = [
   { id: '1', item: 'Tomatoes', quantity: 2, unit: 'kg', reason: 'Spoilage', date: new Date(new Date().setDate(new Date().getDate() - 1)) },
@@ -22,7 +23,37 @@ const initialData: WastageEntry[] = [
 
 
 export default function Home() {
-  const [data, setData] = useState<WastageEntry[]>(initialData);
+  const [data, setData] = useState<WastageEntry[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const storedData = localStorage.getItem("wastageData");
+      if (storedData) {
+        const parsedData = JSON.parse(storedData).map((entry: WastageEntry) => ({
+          ...entry,
+          date: new Date(entry.date),
+        }));
+        setData(parsedData);
+      } else {
+        setData(initialData);
+      }
+    } catch (error) {
+      console.error("Failed to load data from localStorage", error);
+      setData(initialData);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem("wastageData", JSON.stringify(data));
+      } catch (error) {
+        console.error("Failed to save data to localStorage", error);
+      }
+    }
+  }, [data, isLoaded]);
 
   const handleAddWastage = (entry: Omit<WastageEntry, 'id' | 'date'>) => {
     const newEntry: WastageEntry = {
@@ -37,6 +68,25 @@ export default function Home() {
     setData(prevData => prevData.filter(entry => entry.id !== id));
   };
   
+  if (!isLoaded) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background">
+        <Header />
+        <main className="flex-1 p-4 sm:p-6 md:p-8">
+          <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="lg:col-span-1 xl:col-span-1 space-y-4">
+              <Skeleton className="h-[450px] w-full" />
+            </div>
+            <div className="lg:col-span-2 xl:col-span-3 space-y-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-96 w-full" />
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
