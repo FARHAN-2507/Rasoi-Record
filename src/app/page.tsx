@@ -18,7 +18,6 @@ import {
   deleteDoc,
   doc,
   query,
-  orderBy,
   Timestamp,
   where,
 } from "firebase/firestore";
@@ -59,10 +58,10 @@ export default function Home() {
         let q;
         if (appUser.role === 'super_admin') {
           // Super admin sees all data
-          q = query(collection(db, "wastage"), orderBy("date", "desc"));
+          q = query(collection(db, "wastage"));
         } else {
           // Owner sees only their data
-          q = query(collection(db, "wastage"), where("userId", "==", appUser.uid), orderBy("date", "desc"));
+          q = query(collection(db, "wastage"), where("userId", "==", appUser.uid));
         }
         
         const querySnapshot = await getDocs(q);
@@ -78,6 +77,10 @@ export default function Home() {
             userId: docData.userId,
           } as WastageEntry;
         });
+        
+        // Sort data on the client-side to avoid needing a composite index
+        wastageData.sort((a, b) => b.date.getTime() - a.date.getTime());
+
         setData(wastageData);
       } catch (error) {
         console.error("Error fetching data from Firestore:", error);
