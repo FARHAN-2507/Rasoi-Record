@@ -30,7 +30,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import type { WastageEntry, WastageReason, WastageUnit } from "@/types";
+import type { WastageEntry } from "@/types";
 import { wastageReasons, wastageUnits } from "@/types";
 
 
@@ -42,7 +42,7 @@ const formSchema = z.object({
 });
 
 type WastageFormProps = {
-  onAddEntry: (entry: Omit<WastageEntry, "id" | "date">) => void;
+  onAddEntry: (entry: Omit<WastageEntry, "id" | "date" | "userId">) => void;
 };
 
 export default function WastageForm({ onAddEntry }: WastageFormProps) {
@@ -59,7 +59,7 @@ export default function WastageForm({ onAddEntry }: WastageFormProps) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    onAddEntry(values as Omit<WastageEntry, 'id' | 'date'>);
+    onAddEntry(values as Omit<WastageEntry, 'id' | 'date' | 'userId'>);
     toast({
       title: "Entry Added",
       description: `${values.quantity} ${values.unit} of ${values.item} logged.`,

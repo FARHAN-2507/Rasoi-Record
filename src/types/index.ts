@@ -11,4 +11,13 @@ export interface WastageEntry {
   unit: WastageUnit;
   reason: WastageReason;
   date: Date;
+  userId: string;
+}
+
+export type UserRole = 'super_admin' | 'owner';
+
+export interface AppUser {
+  uid: string;
+  email: string | null;
+  role: UserRole;
 }
