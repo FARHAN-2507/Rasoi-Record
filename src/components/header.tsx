@@ -22,7 +22,7 @@ export default function Header() {
       <div className="flex items-center gap-2">
         <CookingPot className="h-7 w-7 text-primary" />
         <h1 className="text-2xl font-headline tracking-tight text-foreground">
-          WasteWise Insights
+          Rasoi Record Insights
         </h1>
       </div>
       {appUser && (

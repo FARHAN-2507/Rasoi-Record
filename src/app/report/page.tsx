@@ -81,7 +81,7 @@ export default function ReportPage() {
                         <div className="flex items-center gap-3 mb-4">
                              <CookingPot className="h-8 w-8 text-primary" />
                              <h1 className="text-3xl font-headline tracking-tight text-foreground">
-                                WasteWise Insights
+                                Rasoi Record Insights
                              </h1>
                         </div>
                         <Separator />

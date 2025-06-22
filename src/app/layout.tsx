@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/auth-context';
 
 export const metadata: Metadata = {
-  title: 'WasteWise Insights',
+  title: 'Rasoi Record Insights',
   description: 'Log and analyze daily food wastage in restaurants.',
 };
 

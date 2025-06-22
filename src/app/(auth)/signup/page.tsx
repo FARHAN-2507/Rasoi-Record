@@ -72,7 +72,7 @@ export default function SignupPage() {
         <div className="flex items-center justify-center gap-2 mb-4">
             <CookingPot className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-headline tracking-tight text-foreground">
-            WasteWise
+            Rasoi Record
             </h1>
         </div>
         <CardTitle className="text-2xl">Sign Up</CardTitle>
