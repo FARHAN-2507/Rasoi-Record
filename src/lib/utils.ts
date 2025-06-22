@@ -12,7 +12,7 @@ export function exportToCsv(data: WastageEntry[], fileName: string) {
         return;
     }
 
-    const headers = "ID,Date,Item,Quantity,Unit,Reason";
+    const headers = "ID,Date,Item,Quantity,Unit,Reason,Cost";
     
     const rows = data.map(entry => {
         const rowData = [
@@ -21,7 +21,8 @@ export function exportToCsv(data: WastageEntry[], fileName: string) {
             `"${entry.item.replace(/"/g, '""')}"`,
             entry.quantity,
             entry.unit,
-            entry.reason
+            entry.reason,
+            entry.cost ? entry.cost.toFixed(2) : ''
         ];
         return rowData.join(',');
     });

@@ -12,6 +12,7 @@ export interface WastageEntry {
   reason: WastageReason;
   date: Date;
   userId: string;
+  cost?: number;
 }
 
 export type UserRole = 'super_admin' | 'owner';

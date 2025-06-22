@@ -15,7 +15,8 @@ export async function generateWeeklySummary(data: WastageEntry[]) {
             item: d.item,
             quantity: `${d.quantity} ${d.unit}`,
             reason: d.reason,
-            date: d.date.toISOString().split('T')[0]
+            date: d.date.toISOString().split('T')[0],
+            cost: d.cost
         })));
         
         const result = await generateWeeklySummaryFlow({ wastageData });
@@ -50,7 +51,8 @@ export async function generateSmartInsights(data: WastageEntry[]): Promise<{ ins
             item: d.item,
             quantity: `${d.quantity} ${d.unit}`,
             reason: d.reason,
-            date: d.date.toISOString().split('T')[0]
+            date: d.date.toISOString().split('T')[0],
+            cost: d.cost
         })));
         
         const result = await generateSmartInsightsFlow({ wastageData });

@@ -19,7 +19,7 @@ const SmartInsightSchema = z.object({
 export type SmartInsight = z.infer<typeof SmartInsightSchema>;
 
 const GenerateSmartInsightsInputSchema = z.object({
-  wastageData: z.string().describe('A JSON string containing the weekly wastage data, with item name, quantity, and reason.'),
+  wastageData: z.string().describe('A JSON string containing the weekly wastage data, with item name, quantity, reason, and optional cost.'),
 });
 export type GenerateSmartInsightsInput = z.infer<typeof GenerateSmartInsightsInputSchema>;
 
@@ -43,11 +43,14 @@ const prompt = ai.definePrompt({
 
   Your task is to identify 2-3 key patterns, problems, or opportunities within this data. For each one, provide a clear finding and an actionable suggestion.
 
-  Example Insights:
-  - Finding: "There's a consistent spike in 'Bread' spoilage on Mondays." Suggestion: "Review your weekend bread inventory and adjust Monday's order down by 15% to see if that reduces spoilage."
-  - Finding: "Preparation Waste for 'Onions' is unusually high." Suggestion: "Conduct a brief training session with kitchen staff on proper onion dicing techniques to maximize yield."
+  Prioritize insights that have a significant financial impact. If cost data is included, use it to frame your findings and suggestions in terms of monetary savings.
 
-  Focus on providing practical, easy-to-implement advice. Ensure the output is valid JSON that adheres to the provided schema.
+  Example Insights:
+  - Finding: "There's a consistent spike in 'Bread' spoilage on Mondays, costing an estimated $25 this week." Suggestion: "Review your weekend bread inventory and adjust Monday's order down by 15% to see if that reduces spoilage and saves cost."
+  - Finding: "Preparation Waste for 'Onions' is unusually high." Suggestion: "Conduct a brief training session with kitchen staff on proper onion dicing techniques to maximize yield."
+  - Finding: "Expired avocados accounted for over $50 in waste." Suggestion: "Switch to a supplier with a more frequent delivery schedule for avocados to minimize spoilage."
+
+  Focus on providing practical, easy-to-implement advice that leads to cost savings. Ensure the output is valid JSON that adheres to the provided schema.
   `,
 });
 

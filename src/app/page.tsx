@@ -76,6 +76,7 @@ export default function Home() {
             quantity: docData.quantity,
             unit: docData.unit,
             reason: docData.reason,
+            cost: docData.cost,
             date: (docData.date as Timestamp).toDate(),
             userId: docData.userId,
           } as WastageEntry;

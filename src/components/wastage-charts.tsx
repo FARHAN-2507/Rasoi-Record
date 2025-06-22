@@ -23,8 +23,8 @@ type WastageChartsProps = {
 };
 
 const trendChartConfig = {
-  wastage: {
-    label: "Wastage (kg)",
+  cost: {
+    label: "Cost ($)",
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
@@ -42,19 +42,19 @@ const reasonChartConfig = {
 export default function WastageCharts({ data }: WastageChartsProps) {
   const trendData = useMemo(() => {
     const dailyData: { [key: string]: number } = {};
-    data.forEach((entry) => {
-      // Simple normalization to kg for charting. This is a simplification.
-      const quantityInKg = entry.unit === 'g' ? entry.quantity / 1000 : entry.unit.match(/L|ml/) ? 0 : entry.quantity;
+    const relevantData = data.filter(entry => typeof entry.cost === 'number');
+
+    relevantData.forEach((entry) => {
       const dateStr = entry.date.toLocaleDateString('en-CA');
       if (dailyData[dateStr]) {
-        dailyData[dateStr] += quantityInKg;
+        dailyData[dateStr] += entry.cost!;
       } else {
-        dailyData[dateStr] = quantityInKg;
+        dailyData[dateStr] = entry.cost!;
       }
     });
 
     return Object.entries(dailyData)
-      .map(([date, wastage]) => ({ date, wastage: parseFloat(wastage.toFixed(2)) }))
+      .map(([date, cost]) => ({ date, cost: parseFloat(cost.toFixed(2)) }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [data]);
 
@@ -62,32 +62,48 @@ export default function WastageCharts({ data }: WastageChartsProps) {
     const reasonTotals: { [key: string]: number } = {};
     wastageReasons.forEach(r => reasonTotals[r] = 0);
 
-    data.forEach(entry => {
-        const quantityInKg = entry.unit === 'g' ? entry.quantity / 1000 : entry.unit.match(/L|ml/) ? 0 : entry.quantity;
+    const relevantData = data.filter(entry => typeof entry.cost === 'number');
+    relevantData.forEach(entry => {
         if(reasonTotals[entry.reason] !== undefined) {
-            reasonTotals[entry.reason] += quantityInKg;
+            reasonTotals[entry.reason] += entry.cost!;
         }
     });
     
     return Object.entries(reasonTotals).map(([name, value]) => ({name, value: parseFloat(value.toFixed(2))}));
-
   }, [data]);
+
+  const hasCostData = data.some(entry => typeof entry.cost === 'number');
+
+  if (!hasCostData) {
+    return (
+        <div className="grid gap-8 md:grid-cols-1">
+            <Card className="shadow-md flex items-center justify-center min-h-[368px]">
+                <CardHeader className="text-center">
+                    <CardTitle>No Cost Data Available</CardTitle>
+                    <CardDescription>
+                        Start adding costs to your wastage entries to see financial charts.
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+        </div>
+    )
+  }
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="font-headline">Wastage Trend</CardTitle>
-          <CardDescription>Daily total wastage over time (normalized to kg)</CardDescription>
+          <CardTitle className="font-headline">Cost Trend</CardTitle>
+          <CardDescription>Daily total cost of wastage over time</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={trendChartConfig} className="h-[250px] w-full">
             <AreaChart data={trendData}>
               <CartesianGrid vertical={false} />
               <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} />
-              <YAxis />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <Area dataKey="wastage" type="monotone" fill="var(--color-wastage)" fillOpacity={0.4} stroke="var(--color-wastage)" />
+              <YAxis unit="$" />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent formatter={(value) => `$${value}`} />} />
+              <Area dataKey="cost" type="monotone" fill="var(--color-cost)" fillOpacity={0.4} stroke="var(--color-cost)" />
             </AreaChart>
           </ChartContainer>
         </CardContent>
@@ -95,16 +111,16 @@ export default function WastageCharts({ data }: WastageChartsProps) {
 
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="font-headline">Wastage by Reason</CardTitle>
-          <CardDescription>Total wastage for each reason (normalized to kg)</CardDescription>
+          <CardTitle className="font-headline">Cost by Reason</CardTitle>
+          <CardDescription>Total cost of wastage for each reason</CardDescription>
         </CardHeader>
         <CardContent>
             <ChartContainer config={reasonChartConfig} className="h-[250px] w-full">
                 <BarChart data={reasonData} layout="vertical" margin={{left: 20}}>
                     <CartesianGrid horizontal={false} />
-                    <XAxis type="number" hide/>
+                    <XAxis type="number" hide unit="$" />
                     <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} tickMargin={8} width={120} />
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent formatter={(value) => `$${value}`} />} />
                     <Bar dataKey="value" layout="vertical" radius={4}>
                          {reasonData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={reasonChartConfig[entry.name as keyof typeof reasonChartConfig]?.color} />

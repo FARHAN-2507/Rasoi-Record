@@ -39,6 +39,7 @@ const formSchema = z.object({
   quantity: z.coerce.number().positive("Quantity must be a positive number."),
   unit: z.enum(wastageUnits),
   reason: z.enum(wastageReasons),
+  cost: z.coerce.number().min(0, "Cost must be a positive number.").optional(),
 });
 
 type WastageFormProps = {
@@ -55,6 +56,7 @@ export default function WastageForm({ onAddEntry }: WastageFormProps) {
       quantity: 0,
       unit: "kg",
       reason: "Spoilage",
+      cost: undefined,
     },
   });
 
@@ -150,6 +152,19 @@ export default function WastageForm({ onAddEntry }: WastageFormProps) {
                 </FormItem>
               )}
             />
+             <FormField
+                control={form.control}
+                name="cost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Estimated Cost ($) <span className="text-xs text-muted-foreground">(Optional)</span></FormLabel>
+                    <FormControl>
+                      <Input type="number" step="0.01" placeholder="e.g., 4.50" {...field} value={field.value ?? ""} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             <Button type="submit" className="w-full" size="lg">
               <PlusCircle className="mr-2 h-5 w-5" />
               Log Wastage

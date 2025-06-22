@@ -67,10 +67,14 @@ export default function WastageTable({ data, onDeleteEntry }: WastageTableProps)
     let sortableData = [...filteredData];
     if (sortConfig !== null) {
       sortableData.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
+        const aVal = a[sortConfig.key];
+        const bVal = b[sortConfig.key];
+        if (aVal === undefined || aVal === null) return 1;
+        if (bVal === undefined || bVal === null) return -1;
+        if (aVal < bVal) {
           return sortConfig.direction === 'asc' ? -1 : 1;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
+        if (aVal > bVal) {
           return sortConfig.direction === 'asc' ? 1 : -1;
         }
         return 0;
@@ -164,6 +168,12 @@ export default function WastageTable({ data, onDeleteEntry }: WastageTableProps)
                   </Button>
                 </TableHead>
                 <TableHead>
+                   <Button variant="ghost" onClick={() => requestSort('cost')}>
+                    Cost
+                    {getSortIndicator('cost')}
+                  </Button>
+                </TableHead>
+                <TableHead>
                   <Button variant="ghost" onClick={() => requestSort('reason')}>
                     Reason
                     {getSortIndicator('reason')}
@@ -184,6 +194,7 @@ export default function WastageTable({ data, onDeleteEntry }: WastageTableProps)
                   <TableRow key={entry.id}>
                     <TableCell className="font-medium">{entry.item}</TableCell>
                     <TableCell>{entry.quantity} {entry.unit}</TableCell>
+                    <TableCell>{entry.cost ? `$${entry.cost.toFixed(2)}` : 'N/A'}</TableCell>
                     <TableCell>{entry.reason}</TableCell>
                     <TableCell>{entry.date.toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
@@ -211,7 +222,7 @@ export default function WastageTable({ data, onDeleteEntry }: WastageTableProps)
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     No results found.
                   </TableCell>
                 </TableRow>

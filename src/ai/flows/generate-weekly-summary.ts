@@ -12,7 +12,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateWeeklySummaryInputSchema = z.object({
-  wastageData: z.string().describe('A JSON string containing the weekly wastage data, with item name, quantity, and reason.'),
+  wastageData: z.string().describe('A JSON string containing the weekly wastage data, with item name, quantity, reason, and optional cost.'),
 });
 export type GenerateWeeklySummaryInput = z.infer<typeof GenerateWeeklySummaryInputSchema>;
 
@@ -36,11 +36,12 @@ const prompt = ai.definePrompt({
   Data: {{{wastageData}}}
 
   Focus on identifying:
-  - Items with the highest wastage quantities.
+  - Items with the highest wastage quantities and, if available, highest cost.
   - Most common reasons for wastage.
-  - Any significant changes or patterns compared to previous weeks (if mentioned in the data).
+  - The total financial impact of waste if cost data is provided.
+  - Any significant changes or patterns.
 
-  The summary should be no more than 200 words and provide actionable insights for reducing wastage.
+  The summary should be no more than 200 words and provide actionable insights for reducing wastage. Prioritize financial impact in your summary.
   `,
 });
 
