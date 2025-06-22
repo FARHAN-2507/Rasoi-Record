@@ -21,6 +21,7 @@ export interface AppUser {
   uid: string;
   email: string | null;
   role: UserRole;
+  weeklyWasteGoal?: number;
 }
 
 export interface Donation extends WastageEntry {

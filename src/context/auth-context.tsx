@@ -9,12 +9,14 @@ import { AppUser } from '@/types';
 type AuthContextType = {
   user: FirebaseUser | null;
   appUser: AppUser | null;
+  setAppUser: React.Dispatch<React.SetStateAction<AppUser | null>>;
   loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   appUser: null,
+  setAppUser: () => {},
   loading: true,
 });
 
@@ -49,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, appUser, loading }}>
+    <AuthContext.Provider value={{ user, appUser, setAppUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

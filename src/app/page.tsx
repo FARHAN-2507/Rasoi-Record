@@ -10,6 +10,7 @@ import WeeklySummary from "@/components/weekly-summary";
 import DonationsList from "@/components/donations-list";
 import RecipeGenerator from "@/components/recipe-generator";
 import SmartInsights from "@/components/smart-insights";
+import GoalTracker from "@/components/goal-tracker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { WastageEntry } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,12 +24,13 @@ import {
   query,
   Timestamp,
   where,
+  setDoc,
 } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth-context";
 
 export default function Home() {
-  const { appUser, loading: authLoading } = useAuth();
+  const { appUser, setAppUser, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const [data, setData] = useState<WastageEntry[]>([]);
@@ -155,6 +157,27 @@ export default function Home() {
       });
     }
   };
+
+  const handleUpdateGoal = async (newGoal: number) => {
+    if (!appUser || !db) return;
+
+    const userDocRef = doc(db, 'users', appUser.uid);
+    try {
+        await setDoc(userDocRef, { weeklyWasteGoal: newGoal }, { merge: true });
+        setAppUser(prev => prev ? { ...prev, weeklyWasteGoal: newGoal } : null);
+    } catch (error) {
+        console.error("Error updating goal:", error);
+        toast({
+            title: "Error",
+            description: "Could not update your goal.",
+            variant: "destructive",
+        });
+    }
+  };
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const weeklyData = data.filter(entry => entry.date >= sevenDaysAgo);
   
   if (authLoading || !isLoaded || !appUser) {
     return (
@@ -167,7 +190,9 @@ export default function Home() {
             </div>
             <div className="lg:col-span-2 xl:col-span-3 space-y-4">
               <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-96 w-full" />
+              <Skeleton className="h-[400px] w-full" />
+              <Skeleton className="h-[150px] w-full" />
+              <Skeleton className="h-[200px] w-full" />
             </div>
           </div>
         </main>
@@ -196,6 +221,7 @@ export default function Home() {
               <TabsContent value="dashboard" className="mt-6">
                 <div className="flex flex-col gap-8">
                   <WastageCharts data={data} />
+                  <GoalTracker weeklyData={weeklyData} goal={appUser.weeklyWasteGoal} onUpdateGoal={handleUpdateGoal} />
                   <WeeklySummary data={data} />
                   <SmartInsights data={data} />
                 </div>
