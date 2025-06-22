@@ -7,6 +7,7 @@ import WastageForm from "@/components/wastage-form";
 import WastageTable from "@/components/wastage-table";
 import WastageCharts from "@/components/wastage-charts";
 import WeeklySummary from "@/components/weekly-summary";
+import DonationsList from "@/components/donations-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { WastageEntry } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -183,9 +184,10 @@ export default function Home() {
 
           <div className="lg:col-span-2 xl:col-span-3">
             <Tabs defaultValue="dashboard" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                 <TabsTrigger value="records">All Records</TabsTrigger>
+                <TabsTrigger value="donations">Donations</TabsTrigger>
               </TabsList>
               <TabsContent value="dashboard" className="mt-6">
                 <div className="flex flex-col gap-8">
@@ -195,6 +197,9 @@ export default function Home() {
               </TabsContent>
               <TabsContent value="records" className="mt-6">
                 <WastageTable data={data} onDeleteEntry={handleDeleteWastage} />
+              </TabsContent>
+              <TabsContent value="donations" className="mt-6">
+                <DonationsList />
               </TabsContent>
             </Tabs>
           </div>

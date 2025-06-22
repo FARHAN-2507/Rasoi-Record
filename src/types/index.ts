@@ -21,3 +21,7 @@ export interface AppUser {
   email: string | null;
   role: UserRole;
 }
+
+export interface Donation extends WastageEntry {
+  donor: AppUser;
+}
