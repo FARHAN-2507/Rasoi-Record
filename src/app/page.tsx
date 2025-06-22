@@ -9,6 +9,7 @@ import WastageCharts from "@/components/wastage-charts";
 import WeeklySummary from "@/components/weekly-summary";
 import DonationsList from "@/components/donations-list";
 import RecipeGenerator from "@/components/recipe-generator";
+import SmartInsights from "@/components/smart-insights";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { WastageEntry } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -195,6 +196,7 @@ export default function Home() {
                 <div className="flex flex-col gap-8">
                   <WastageCharts data={data} />
                   <WeeklySummary data={data} />
+                  <SmartInsights data={data} />
                 </div>
               </TabsContent>
               <TabsContent value="records" className="mt-6">

@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { BrainCircuit, Sparkles } from "lucide-react";
+import { BrainCircuit, Sparkles, FileText } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -25,6 +25,7 @@ export default function WeeklySummary({ data }: WeeklySummaryProps) {
   const [summary, setSummary] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -50,10 +51,16 @@ export default function WeeklySummary({ data }: WeeklySummaryProps) {
     });
   };
 
+  const handleViewReport = () => {
+    if (summary) {
+        router.push(`/report?summary=${encodeURIComponent(summary)}`);
+    }
+  };
+
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
                 <CardTitle className="font-headline text-2xl flex items-center gap-2">
                     <BrainCircuit className="h-6 w-6 text-primary" />
@@ -63,10 +70,16 @@ export default function WeeklySummary({ data }: WeeklySummaryProps) {
                     Get AI-powered insights on your wastage for the last 7 days.
                 </CardDescription>
             </div>
-             <Button onClick={handleGenerateSummary} disabled={isPending || weeklyData.length === 0}>
-                <Sparkles className="mr-2 h-4 w-4" />
-                {isPending ? "Generating..." : "Generate"}
-            </Button>
+             <div className="flex gap-2">
+                <Button onClick={handleGenerateSummary} disabled={isPending || weeklyData.length === 0}>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    {isPending ? "Generating..." : "Generate"}
+                </Button>
+                 <Button onClick={handleViewReport} disabled={!summary || isPending} variant="outline">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Print
+                </Button>
+             </div>
         </div>
       </CardHeader>
       <CardContent className="min-h-[120px]">
