@@ -8,6 +8,7 @@ import WastageTable from "@/components/wastage-table";
 import WastageCharts from "@/components/wastage-charts";
 import WeeklySummary from "@/components/weekly-summary";
 import DonationsList from "@/components/donations-list";
+import RecipeGenerator from "@/components/recipe-generator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { WastageEntry } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -184,10 +185,11 @@ export default function Home() {
 
           <div className="lg:col-span-2 xl:col-span-3">
             <Tabs defaultValue="dashboard" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                 <TabsTrigger value="records">All Records</TabsTrigger>
                 <TabsTrigger value="donations">Donations</TabsTrigger>
+                <TabsTrigger value="recipes">Recipe Ideas</TabsTrigger>
               </TabsList>
               <TabsContent value="dashboard" className="mt-6">
                 <div className="flex flex-col gap-8">
@@ -200,6 +202,9 @@ export default function Home() {
               </TabsContent>
               <TabsContent value="donations" className="mt-6">
                 <DonationsList />
+              </TabsContent>
+              <TabsContent value="recipes" className="mt-6">
+                <RecipeGenerator />
               </TabsContent>
             </Tabs>
           </div>
