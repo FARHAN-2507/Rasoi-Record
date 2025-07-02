@@ -72,7 +72,7 @@ export default function Home() {
     fetchData();
   }, [toast]);
 
-  const handleAddWastage = async (entry: Omit<WastageEntry, "id" | "date">) => {
+  const handleAddWastage = async (entry: Omit<WastageEntry, "id" | "date" | "userId">) => {
     if (!db) {
         toast({
             title: "Firebase Not Configured",
@@ -82,9 +82,13 @@ export default function Home() {
         return;
     }
 
+    // You may want to get the userId from auth context or similar
+    const userId = ""; // TODO: Replace with actual user id if available
+
     const newEntryData = {
       ...entry,
       date: new Date(),
+      userId,
     };
 
     try {

@@ -33,6 +33,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
+        if (!db) {
+          setAppUser({ uid: firebaseUser.uid, email: firebaseUser.email, role: 'owner' });
+          setLoading(false);
+          return;
+        }
         const userDocRef = doc(db, 'users', firebaseUser.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {

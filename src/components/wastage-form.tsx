@@ -37,8 +37,8 @@ import { wastageReasons, wastageUnits } from "@/types";
 const formSchema = z.object({
   item: z.string().min(2, "Item name must be at least 2 characters."),
   quantity: z.coerce.number().positive("Quantity must be a positive number."),
-  unit: z.enum(wastageUnits),
-  reason: z.enum(wastageReasons),
+  unit: z.enum(wastageUnits as [string, ...string[]]),
+  reason: z.enum(wastageReasons as [string, ...string[]]),
   cost: z.coerce.number().min(0, "Cost must be a positive number.").optional(),
 });
 
@@ -157,7 +157,7 @@ export default function WastageForm({ onAddEntry }: WastageFormProps) {
                 name="cost"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Estimated Cost ($) <span className="text-xs text-muted-foreground">(Optional)</span></FormLabel>
+                    <FormLabel>Estimated Cost (₹)</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" placeholder="e.g., 4.50" {...field} value={field.value ?? ""} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
                     </FormControl>

@@ -61,6 +61,9 @@ export default function Home() {
       setIsLoaded(false);
       try {
         let q;
+        if (!db) {
+          throw new Error("Firestore not initialized");
+        }
         if (appUser.role === 'super_admin') {
           // Super admin sees all data
           q = query(collection(db, "wastage"));
